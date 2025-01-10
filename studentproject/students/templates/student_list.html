@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #444;
+        }
+        a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+        a:hover {
+            color: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .actions a {
+            margin-right: 10px;
+        }
+        .search-form {
+            margin: 20px 0;
+        }
+        .search-form input {
+            padding: 10px;
+            width: 250px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .search-form button {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .search-form button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Student List</h1>
+    <a href="{% url 'add_student' %}">Add New Student</a>
+    
+    <!-- Student List Table -->
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Marks</th>
+            <th>Grade</th>
+            <th>Actions</th>
+        </tr>
+        {% for student in students %}
+        <tr>
+            <td>{{ student.name }}</td>
+            <td>{{ student.age }}</td>
+            <td>{{ student.marks}}</td>
+            <td>{{ student.grade }}</td>
+            <td class="actions">
+                <a href="{% url 'edit_student' student.pk %}">Edit</a>
+                <a href="{% url 'delete_student' student.pk %}">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <!-- Sorting Links -->
+    <p>Sorting</p>
+    <div>
+        <a href="?sort_order=asc">
+            <button {% if sort_order == 'asc' %}disabled{% endif %}>Sort by Marks (Ascending)</button>
+        </a>
+        <a href="?sort_order=desc">
+            <button {% if sort_order == 'desc' %}disabled{% endif %}>Sort by Marks (Descending)</button>
+        </a>
+    </div>
+
+    <!-- Search Form (at the bottom) -->
+    <div class="search-form">
+        <form method="GET" action="{% url 'student_list' %}">
+            <input type="text" name="search_query" placeholder="Search by name or marks" value="{{ search_query }}">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    <!-- Display Search Results if Any -->
+    {% if search_query %}
+    <h3>Search Results for "{{ search_query }}"</h3>
+    <ul>
+        {% for student in students %}
+        <li>{{ student.name }} - {{ student.marks }} - {{ student.grade }}</li>
+        {% empty %}
+        <li>No results found.</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</body>
+</html>
